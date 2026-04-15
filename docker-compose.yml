@@ -1,0 +1,75 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — Vibe full-stack orchestration
+#
+# Services:
+#   mongo    — MongoDB 7 on port 27017 with a named volume for persistence
+#   backend  — Express API on port 5000, waits for mongo to be healthy
+#   frontend — React SPA on port 3000, waits for backend to start
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  # ── MongoDB ─────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: vibe-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Backend (Express) ────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: vibe-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      # `mongo` resolves to the mongo service via Docker's internal DNS
+      - MONGO_URI=mongodb://mongo:27017/vibedb
+      - JWT_SECRET=${JWT_SECRET:-vibe_docker_secret_change_me}
+      - PORT=5000
+      - CLIENT_URL=http://localhost:3000
+      # COOKIE_SECURE=false — app runs on HTTP in local Docker; set to true only with HTTPS
+      - COOKIE_SECURE=false
+      # SERVER_URL — the public URL the backend is reachable at (used for avatar URLs)
+      - SERVER_URL=http://localhost:5000
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      # Persist uploaded avatar images across container restarts
+      - uploads-data:/app/uploads
+
+  # ── Frontend (React/Vite SPA) ────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Baked into the JS bundle at build time so axios knows the backend URL.
+        # Must be the URL the *browser* can reach (localhost from the user's machine).
+        - VITE_API_URL=http://localhost:5000
+    container_name: vibe-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+# ── Named volumes ────────────────────────────────────────────────────────────
+volumes:
+  mongo-data:
+    driver: local
+  uploads-data:
+    driver: local
