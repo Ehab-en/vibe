@@ -165,7 +165,8 @@ const PostCard = ({ post }) => {
 
       {/* ── Location tag ───────────────────────────────────────────────────── */}
       {post.location?.name && (
-        <p className="text-xs text-gray-400 flex items-center gap-1">
+        <span className="inline-flex items-center gap-1 text-xs text-[#534AB7] dark:text-primary-300
+                         bg-[#EEEDF9] dark:bg-gray-700 px-2 py-0.5 rounded-full w-fit">
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
               d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -173,7 +174,7 @@ const PostCard = ({ post }) => {
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
           {post.location.name}
-        </p>
+        </span>
       )}
 
       {/* ── Action bar: like + comment ──────────────────────────────────────── */}
@@ -218,8 +219,8 @@ const PostCard = ({ post }) => {
           {/* Existing comments */}
           {post.comments?.map((c) => (
             <div key={c._id} className="flex gap-2">
-              <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center
-                              text-xs font-bold text-gray-500 shrink-0">
+              <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center
+                              text-xs font-bold text-gray-500 dark:text-gray-300 shrink-0">
                 {c.user?.name?.[0]?.toUpperCase()}
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 rounded-[8px] px-3 py-1.5 flex-1">

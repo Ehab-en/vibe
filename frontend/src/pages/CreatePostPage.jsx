@@ -4,7 +4,7 @@
  * Features:
  *  - Rich textarea with 280-character limit and live counter ring
  *  - Image file picker with local preview (sent as multipart/form-data)
- *  - Location detection via Geolocation API
+ *  - Plain text location input (saves to post's location.name field)
  *  - Visibility toggle (public / followers only)
  *  - Builds FormData and dispatches createPost to Redux on submit
  *  - Navigates to /home on success
@@ -28,9 +28,8 @@ const CreatePostPage = () => {
   const [text, setText] = useState("");
   const [imageFile, setImageFile] = useState(null);      // File object
   const [imagePreview, setImagePreview] = useState("");  // local object URL for preview
-  const [location, setLocation] = useState(null);
+  const [locationText, setLocationText] = useState("");  // plain text location
   const [isPublic, setIsPublic] = useState(true);
-  const [locLoading, setLocLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
@@ -81,43 +80,6 @@ const CreatePostPage = () => {
   };
 
   /**
-   * Uses the browser Geolocation API + Nominatim reverse-geocoding
-   * to attach a city name to the post.
-   */
-  const handleGetLocation = () => {
-    if (!navigator.geolocation) {
-      setError("Geolocation not supported by your browser");
-      return;
-    }
-    setLocLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      async ({ coords: { latitude: lat, longitude: lng } }) => {
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-          );
-          const geo = await res.json();
-          const name =
-            geo.address?.city ||
-            geo.address?.town ||
-            geo.address?.village ||
-            geo.display_name ||
-            "Current location";
-          setLocation({ name, lat, lng });
-        } catch {
-          setLocation({ name: "Current location", lat, lng });
-        } finally {
-          setLocLoading(false);
-        }
-      },
-      () => {
-        setError("Could not retrieve location");
-        setLocLoading(false);
-      }
-    );
-  };
-
-  /**
    * Builds a FormData payload and dispatches the createPost thunk.
    * Using FormData ensures the image file is sent as multipart/form-data
    * so multer on the backend can handle it correctly.
@@ -138,9 +100,9 @@ const CreatePostPage = () => {
       // Field name must match upload.single("image") in routes/posts.js
       formData.append("image", imageFile);
     }
-    if (location) {
+    if (locationText.trim()) {
       // Serialize the location object to JSON — FormData only supports strings
-      formData.append("location", JSON.stringify(location));
+      formData.append("location", JSON.stringify({ name: locationText.trim() }));
     }
 
     const result = await dispatch(createPost(formData));
@@ -156,7 +118,7 @@ const CreatePostPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <div className="max-w-6xl mx-auto pt-16 px-4">
         <div className="flex gap-6 py-6">
@@ -165,14 +127,14 @@ const CreatePostPage = () => {
           {/* ── Create post form card ────────────────────────────────────── */}
           <main className="flex-1 min-w-0">
             <div className="card p-6 max-w-2xl">
-              <h1 className="text-lg font-bold text-gray-900 mb-5">Create a Post</h1>
+              <h1 className="text-lg font-bold text-gray-900 dark:text-white mb-5">Create a Post</h1>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 {/* Author row */}
                 <div className="flex items-center gap-3">
                   {user?.avatar ? (
                     <img src={user.avatar} alt={user.name}
-                      className="w-10 h-10 rounded-full object-cover border border-[#e5e5e5]" />
+                      className="w-10 h-10 rounded-full object-cover border border-[#e5e5e5] dark:border-gray-700" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-[#534AB7] flex items-center
                                     justify-center text-white font-bold">
@@ -180,8 +142,8 @@ const CreatePostPage = () => {
                     </div>
                   )}
                   <div>
-                    <p className="text-sm font-semibold">{user?.name}</p>
-                    <p className="text-xs text-gray-400">@{user?.username}</p>
+                    <p className="text-sm font-semibold dark:text-white">{user?.name}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">@{user?.username}</p>
                   </div>
                 </div>
 
@@ -191,8 +153,10 @@ const CreatePostPage = () => {
                   onChange={(e) => setText(e.target.value)}
                   placeholder="What's happening?"
                   rows={6}
-                  className="w-full resize-none border border-[#e5e5e5] rounded-[12px] p-3 text-sm
-                             leading-relaxed focus:outline-none focus:border-[#534AB7] transition"
+                  className="w-full resize-none border border-[#e5e5e5] dark:border-gray-600 rounded-[12px]
+                             p-3 text-sm leading-relaxed focus:outline-none focus:border-[#534AB7]
+                             transition bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                             placeholder-gray-400 dark:placeholder-gray-500"
                   data-testid="create-post-textarea"
                 />
 
@@ -220,7 +184,7 @@ const CreatePostPage = () => {
 
                 {/* ── Image file picker ──────────────────────────────────── */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Attach image (optional)
                   </label>
 
@@ -241,7 +205,7 @@ const CreatePostPage = () => {
                       onClick={() => fileInputRef.current?.click()}
                       className="flex items-center gap-2 border border-dashed border-[#534AB7]
                                  text-[#534AB7] text-sm px-4 py-2 rounded-[8px] hover:bg-[#EEEDF9]
-                                 transition-colors"
+                                 dark:hover:bg-gray-700 transition-colors"
                       data-testid="image-pick-btn"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +222,7 @@ const CreatePostPage = () => {
                       <img
                         src={imagePreview}
                         alt="Preview"
-                        className="rounded-[8px] max-h-52 object-cover border border-[#e5e5e5]"
+                        className="rounded-[8px] max-h-52 object-cover border border-[#e5e5e5] dark:border-gray-600"
                       />
                       <button
                         type="button"
@@ -270,37 +234,30 @@ const CreatePostPage = () => {
                       >
                         ×
                       </button>
-                      <p className="text-xs text-gray-400 mt-1">{imageFile?.name}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{imageFile?.name}</p>
                     </div>
                   )}
                 </div>
 
-                {/* Location */}
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleGetLocation}
-                    disabled={locLoading}
-                    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#534AB7]
-                               transition-colors border border-[#e5e5e5] px-3 py-1.5 rounded-full"
-                    data-testid="location-detect-btn"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {/* ── Location text input ────────────────────────────────── */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Location (optional)
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-[#534AB7] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
-                    {locLoading ? "Detecting…" : "Detect location"}
-                  </button>
-
-                  {location && (
-                    <span className="text-sm text-[#534AB7] flex items-center gap-1">
-                      📍 {location.name}
-                      <button type="button" onClick={() => setLocation(null)}
-                        className="text-gray-400 hover:text-red-400 ml-1 text-lg leading-none">
-                        ×
-                      </button>
-                    </span>
-                  )}
+                    <input
+                      type="text"
+                      value={locationText}
+                      onChange={(e) => setLocationText(e.target.value)}
+                      placeholder="e.g. Muscat, Oman"
+                      className="input text-sm"
+                      data-testid="location-text-input"
+                    />
+                  </div>
                 </div>
 
                 {/* Visibility toggle */}
@@ -313,20 +270,20 @@ const CreatePostPage = () => {
                       className="sr-only"
                     />
                     <div className={`w-10 h-5 rounded-full transition-colors
-                      ${isPublic ? "bg-[#534AB7]" : "bg-gray-300"}`}>
+                      ${isPublic ? "bg-[#534AB7]" : "bg-gray-300 dark:bg-gray-600"}`}>
                       <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full
                                        shadow transition-transform
                                        ${isPublic ? "translate-x-5" : "translate-x-0"}`} />
                     </div>
                   </div>
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
                     {isPublic ? "Public post" : "Followers only"}
                   </span>
                 </label>
 
                 {/* Error */}
                 {error && (
-                  <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
                     {error}
                   </p>
                 )}

@@ -171,8 +171,8 @@ const ComposeBox = () => {
             type="button"
             onClick={handleGetLocation}
             disabled={locLoading}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-[#534AB7]
-                       transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-[#534AB7]
+                       dark:hover:text-primary-300 transition-colors disabled:opacity-50"
             data-testid="location-button"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +190,7 @@ const ComposeBox = () => {
                   ? "text-red-500"
                   : remaining <= 20
                   ? "text-orange-400"
-                  : "text-gray-400"
+                  : "text-gray-400 dark:text-gray-500"
               }`}
               data-testid="char-counter"
             >

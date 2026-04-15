@@ -148,7 +148,7 @@ const ProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <Navbar />
         <div className="max-w-6xl mx-auto pt-20 px-4">
           <div className="card animate-pulse h-64" />
@@ -160,7 +160,7 @@ const ProfilePage = () => {
   if (!profile) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <div className="max-w-6xl mx-auto pt-16 px-4">
         <div className="flex gap-6 py-6">
@@ -178,7 +178,7 @@ const ProfilePage = () => {
               <div className="px-6 pb-4">
                 <div className="flex items-end justify-between -mt-10 mb-3">
                   {/* ── Avatar with upload overlay (own profile only) ──────── */}
-                  <div className="relative group border-4 border-white rounded-full">
+                  <div className="relative group border-4 border-white dark:border-gray-800 rounded-full">
                     {/* Hidden file input — triggered by clicking the overlay */}
                     {isOwnProfile && (
                       <input
@@ -255,11 +255,11 @@ const ProfilePage = () => {
                 )}
 
                 {/* Name + bio + location */}
-                <h1 className="text-xl font-bold text-gray-900">{profile.name}</h1>
-                <p className="text-gray-500 text-sm">@{profile.username}</p>
-                {profile.bio && <p className="text-sm mt-2 text-gray-700">{profile.bio}</p>}
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">{profile.name}</h1>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">@{profile.username}</p>
+                {profile.bio && <p className="text-sm mt-2 text-gray-700 dark:text-gray-300">{profile.bio}</p>}
                 {profile.location && (
-                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 flex items-center gap-1">
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243
@@ -270,7 +270,7 @@ const ProfilePage = () => {
                 )}
 
                 {/* Stats row */}
-                <div className="flex gap-6 mt-4 pt-4 border-t border-[#e5e5e5]">
+                <div className="flex gap-6 mt-4 pt-4 border-t border-[#e5e5e5] dark:border-gray-700">
                   {[
                     { label: "Posts",     value: userPosts.length },
                     { label: "Followers", value: profile.followers?.length || 0 },
@@ -278,8 +278,8 @@ const ProfilePage = () => {
                     { label: "Likes",     value: totalLikes },
                   ].map(({ label, value }) => (
                     <div key={label} className="text-center">
-                      <p className="font-bold text-gray-900">{value}</p>
-                      <p className="text-xs text-gray-400">{label}</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{value}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{label}</p>
                     </div>
                   ))}
                 </div>
@@ -288,7 +288,7 @@ const ProfilePage = () => {
 
             {/* ── Tabs ──────────────────────────────────────────────────────── */}
             <div className="card">
-              <div className="flex border-b border-[#e5e5e5]">
+              <div className="flex border-b border-[#e5e5e5] dark:border-gray-700">
                 {["posts", "media", "liked"].map((t) => (
                   <button
                     key={t}
@@ -296,7 +296,7 @@ const ProfilePage = () => {
                     className={`flex-1 py-3 text-sm font-semibold capitalize transition-colors
                       ${activeTab === t
                         ? "text-[#534AB7] border-b-2 border-[#534AB7]"
-                        : "text-gray-400 hover:text-gray-700"
+                        : "text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                       }`}
                   >
                     {t}
@@ -310,7 +310,7 @@ const ProfilePage = () => {
               {activeTab === "posts" && (
                 <>
                   {userPosts.length === 0 ? (
-                    <div className="card p-10 text-center text-gray-400 text-sm">
+                    <div className="card p-10 text-center text-gray-400 dark:text-gray-500 text-sm">
                       No posts yet.
                     </div>
                   ) : (
@@ -322,7 +322,7 @@ const ProfilePage = () => {
               {activeTab === "media" && (
                 <div className="grid grid-cols-3 gap-2">
                   {mediaPosts.length === 0 ? (
-                    <p className="col-span-3 text-center text-gray-400 text-sm py-10">
+                    <p className="col-span-3 text-center text-gray-400 dark:text-gray-500 text-sm py-10">
                       No media posts yet.
                     </p>
                   ) : (
@@ -332,7 +332,7 @@ const ProfilePage = () => {
                         src={post.image}
                         alt=""
                         className="w-full aspect-square object-cover rounded-[8px]
-                                   border border-[#e5e5e5]"
+                                   border border-[#e5e5e5] dark:border-gray-700"
                       />
                     ))
                   )}
@@ -340,7 +340,7 @@ const ProfilePage = () => {
               )}
 
               {activeTab === "liked" && (
-                <div className="card p-10 text-center text-gray-400 text-sm">
+                <div className="card p-10 text-center text-gray-400 dark:text-gray-500 text-sm">
                   Liked posts coming soon.
                 </div>
               )}

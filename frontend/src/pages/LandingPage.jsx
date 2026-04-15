@@ -104,26 +104,26 @@ const LandingPage = () => {
       </div>
 
       {/* ── Right panel — auth forms ────────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white">
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white dark:bg-gray-900">
         {/* Mobile brand (visible only on small screens) */}
         <h1 className="lg:hidden text-4xl font-bold text-[#534AB7] mb-8">Vibe</h1>
 
         <div className="w-full max-w-md">
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             {tab === "login" ? "Welcome back" : "Join Vibe"}
           </h2>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">
             {tab === "login"
               ? "Sign in to continue to your feed"
               : "Create your account and start sharing"}
           </p>
 
           {/* Tab switcher */}
-          <div className="flex border border-[#e5e5e5] rounded-[12px] p-1 mb-6" data-testid="tab-switcher">
+          <div className="flex border border-[#e5e5e5] dark:border-gray-700 dark:bg-gray-800 rounded-[12px] p-1 mb-6" data-testid="tab-switcher">
             <button
               onClick={() => handleTabSwitch("login")}
               className={`flex-1 py-2 rounded-[8px] text-sm font-semibold transition-colors
-                ${tab === "login" ? "bg-[#534AB7] text-white" : "text-gray-500 hover:text-gray-700"}`}
+                ${tab === "login" ? "bg-[#534AB7] text-white" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
               data-testid="login-tab"
             >
               Sign In
@@ -131,7 +131,7 @@ const LandingPage = () => {
             <button
               onClick={() => handleTabSwitch("register")}
               className={`flex-1 py-2 rounded-[8px] text-sm font-semibold transition-colors
-                ${tab === "register" ? "bg-[#534AB7] text-white" : "text-gray-500 hover:text-gray-700"}`}
+                ${tab === "register" ? "bg-[#534AB7] text-white" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"}`}
               data-testid="register-tab"
             >
               Register
@@ -144,7 +144,7 @@ const LandingPage = () => {
             {tab === "register" && (
               <>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Full Name</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
                   <input
                     type="text"
                     value={form.name}
@@ -156,7 +156,7 @@ const LandingPage = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Username</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Username</label>
                   <input
                     type="text"
                     value={form.username}
@@ -172,7 +172,7 @@ const LandingPage = () => {
 
             {/* Shared fields */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -184,7 +184,7 @@ const LandingPage = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
               <input
                 type="password"
                 value={form.password}
@@ -198,7 +198,7 @@ const LandingPage = () => {
 
             {/* Server error */}
             {error && (
-              <p className="text-red-500 text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              <p className="text-red-500 dark:text-red-400 text-sm bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
@@ -218,7 +218,7 @@ const LandingPage = () => {
           </form>
 
           {/* Tab hint */}
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             {tab === "login" ? (
               <>
                 Don't have an account?{" "}

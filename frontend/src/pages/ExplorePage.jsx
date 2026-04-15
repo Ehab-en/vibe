@@ -71,7 +71,7 @@ const ExplorePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Navbar />
       <div className="max-w-6xl mx-auto pt-16 px-4">
         <div className="flex gap-6 py-6">
@@ -91,14 +91,16 @@ const ExplorePage = () => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search posts, people, hashtags…"
-                  className="w-full pl-11 pr-24 py-3 border border-[#e5e5e5] rounded-[12px] bg-white
+                  className="w-full pl-11 pr-24 py-3 border border-[#e5e5e5] dark:border-gray-700
+                             rounded-[12px] bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                             placeholder-gray-400 dark:placeholder-gray-500
                              focus:outline-none focus:border-[#534AB7] text-sm transition"
                   data-testid="explore-search-input"
                 />
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
                   {hasSearched && (
                     <button type="button" onClick={handleClear}
-                      className="text-gray-400 hover:text-gray-600 px-2 py-1 text-xs">
+                      className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 px-2 py-1 text-xs">
                       Clear
                     </button>
                   )}
@@ -112,11 +114,11 @@ const ExplorePage = () => {
             {/* ── Search results (shown when a search is active) ──────── */}
             {hasSearched && (
               <div className="flex flex-col gap-4">
-                <h2 className="font-bold text-gray-700">
+                <h2 className="font-bold text-gray-700 dark:text-gray-300">
                   Results for <span className="text-[#534AB7]">"{query}"</span>
                 </h2>
                 {searchResults.length === 0 ? (
-                  <div className="card p-10 text-center text-gray-400 text-sm">
+                  <div className="card p-10 text-center text-gray-400 dark:text-gray-500 text-sm">
                     No results found. Try a different keyword.
                   </div>
                 ) : (
@@ -130,9 +132,9 @@ const ExplorePage = () => {
               <>
                 {/* Trending hashtags grid */}
                 <section>
-                  <h2 className="font-bold text-gray-800 mb-3">Trending Hashtags</h2>
+                  <h2 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Trending Hashtags</h2>
                   {trending.length === 0 ? (
-                    <p className="text-sm text-gray-400">No trending hashtags yet.</p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">No trending hashtags yet.</p>
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {trending.map(({ tag, count }) => (
@@ -142,7 +144,7 @@ const ExplorePage = () => {
                           className="card p-4 text-left hover:border-[#534AB7] transition-colors group"
                         >
                           <p className="text-[#534AB7] font-bold group-hover:underline text-sm">{tag}</p>
-                          <p className="text-xs text-gray-400 mt-1">{count} {count === 1 ? "post" : "posts"}</p>
+                          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{count} {count === 1 ? "post" : "posts"}</p>
                         </button>
                       ))}
                     </div>
@@ -151,7 +153,7 @@ const ExplorePage = () => {
 
                 {/* Recent public posts */}
                 <section>
-                  <h2 className="font-bold text-gray-800 mb-3">Recent Posts</h2>
+                  <h2 className="font-bold text-gray-800 dark:text-gray-100 mb-3">Recent Posts</h2>
                   <div className="flex flex-col gap-4">
                     {explore.slice(0, 10).map((post) => (
                       <PostCard key={post._id} post={post} />
@@ -169,7 +171,7 @@ const ExplorePage = () => {
             {/* Nearby posts (first 5 from explore) */}
             {!hasSearched && explore.length > 0 && (
               <div className="card p-4">
-                <h3 className="font-bold text-sm mb-3 text-gray-800">Nearby Posts</h3>
+                <h3 className="font-bold text-sm mb-3 text-gray-800 dark:text-gray-100">Nearby Posts</h3>
                 <div className="flex flex-col gap-3">
                   {explore
                     .filter((p) => p.location?.name)
@@ -181,8 +183,8 @@ const ExplorePage = () => {
                           {post.author?.name?.[0]?.toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold truncate">{post.author?.name}</p>
-                          <p className="text-[11px] text-gray-500 truncate">{post.text}</p>
+                          <p className="text-xs font-semibold truncate dark:text-white">{post.author?.name}</p>
+                          <p className="text-[11px] text-gray-500 dark:text-gray-400 truncate">{post.text}</p>
                           <p className="text-[10px] text-[#534AB7] truncate">
                             📍 {post.location.name}
                           </p>
@@ -190,7 +192,7 @@ const ExplorePage = () => {
                       </div>
                     ))}
                   {explore.filter((p) => p.location?.name).length === 0 && (
-                    <p className="text-xs text-gray-400">No location-tagged posts yet.</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">No location-tagged posts yet.</p>
                   )}
                 </div>
               </div>
