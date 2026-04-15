@@ -16,10 +16,10 @@ import { store } from "./store";
 import "./index.css";
 
 // ─── Axios global base URL ────────────────────────────────────────────────────
-// VITE_API_URL is baked into the bundle at build time via the Dockerfile ARG.
-// If the build arg wasn't passed (or Vite left it undefined), fall back to the
-// backend's direct URL so the browser always reaches Express on port 5000.
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Use the same hostname as the current page so the app works from any device
+// on the same network (e.g. a phone at 192.168.0.102:3000 will hit :5000 on
+// that same IP instead of hardcoded localhost).
+axios.defaults.baseURL = `${window.location.protocol}//${window.location.hostname}:5000`;
 // Always send the httpOnly JWT cookie on every cross-origin request
 axios.defaults.withCredentials = true;
 

@@ -35,20 +35,22 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 
 // CORS — allow requests from the React frontend.
-// We support multiple origins so both the Vite dev server (proxy passthrough)
-// and the production static-file server (direct cross-origin XHR) work.
-const ALLOWED_ORIGINS = [
-  process.env.CLIENT_URL || "http://localhost:3000",
-  "http://localhost:3000",
-  "http://localhost:5173", // Vite dev server default port
-];
-
+// Accepts localhost, Vite dev server, and any local network IP range so the
+// app works when accessed from phones/tablets on the same WiFi network.
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (curl, Postman, server-to-server)
+    origin: function (origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, Postman)
       if (!origin) return callback(null, true);
-      if (ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      // Allow localhost and local network IP ranges
+      if (
+        origin.includes("localhost") ||
+        origin.includes("192.168.") ||
+        origin.includes("10.0.") ||
+        origin.includes("172.")
+      ) {
+        return callback(null, true);
+      }
       callback(new Error(`CORS: origin ${origin} not allowed`));
     },
     credentials: true, // required for httpOnly cookie to be sent cross-origin
